@@ -802,8 +802,12 @@ class LspServer:
         else:
             response = await m(None)
 
+        # Per JSON-RPC 2.0 / LSP, a response must contain exactly one of
+        # `result` or `error`. Don't pass `error` here so that, with
+        # model_dump_json(exclude_unset=True), it is omitted rather than
+        # serialized as `"error": null` (which strict clients reject).
         response_message = ResponseMessage(
-            jsonrpc="2.0", id=request.id, result=response, error=None
+            jsonrpc="2.0", id=request.id, result=response
         )
         logger.info(f"Serving response: {response_message}")
         return response_message
@@ -813,8 +817,9 @@ class LspServer:
         request: RequestMessage, error_code: int, msg: str
     ) -> ResponseMessage:
         response_error = ResponseError(code=error_code, message=msg, data=None)
+        # Likewise omit `result` so only `error` is serialized (see _serve_response).
         response_message = ResponseMessage(
-            jsonrpc="2.0", id=request.id, error=response_error, result=None
+            jsonrpc="2.0", id=request.id, error=response_error
         )
         logger.warning(f"Serving error response: {response_message}")
         return response_message

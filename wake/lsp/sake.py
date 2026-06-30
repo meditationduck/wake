@@ -20,7 +20,7 @@ from wake.development.errors import Halt, RevertError, UnknownRevertError
 from wake.development.globals import set_config
 from wake.development.json_rpc import JsonRpcError
 from wake.development.pytypes_resolver import extract_call_revert_data
-from wake.development.transactions import TransactionStatusEnum
+from wake.development.transactions import ExecutionStatusEnum
 from wake.development.utils import (
     AbiNotFound,
     get_logic_contract,
@@ -626,7 +626,7 @@ class SakeContext:
                 confirmations=0,
             )
             tx.wait()
-            success = tx.status == TransactionStatusEnum.SUCCESS
+            success = tx.status == ExecutionStatusEnum.SUCCESS
 
             tx._fetch_debug_trace_transaction()  # TODO may not be available
             assert tx._debug_trace_transaction is not None
@@ -682,7 +682,7 @@ class SakeContext:
                 confirmations=0,
             )
             tx.wait()
-            success = tx.status == TransactionStatusEnum.SUCCESS
+            success = tx.status == ExecutionStatusEnum.SUCCESS
 
             tx._fetch_debug_trace_transaction()  # TODO may not be available
             assert tx._debug_trace_transaction is not None
